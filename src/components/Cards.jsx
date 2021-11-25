@@ -1,42 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useFetchImages } from "../hooks/useFetchImages";
 import Card from "./Card";
+import FormImg from "./FormImg";
+import Loading from "./Loading";
 
 const Cards = () => {
-  const [images, setImages] = useState([]);
-
-  const [input, setInput] = useState("");
-
-  const peticion = () => {
-    fetch(
-      "https://api.unsplash.com/photos?client_id=tY5VgiKj5tUmOT-4zS3QNMQ6nPXFKMBElK86691EhRQ"
-    )
-      .then((res) => res.json())
-      .then((res) => setImages(res));
-  };
-
-  useEffect(() => {
-    peticion();
-  }, []);
-
-  const handleSubmit = (e) =>{
-    e.preventDefault();
-    const text = e.target[0].value;
-
-    setInput(text);
-  }
+  const [images, loading, handleSubmit] = useFetchImages();
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Buscar: <input type="text" name="input text" />{""}
-        </label>
-      </form>
-      <hr/>
-      {images.map((img) => {
-        return <Card key={img.id} img={img.urls.regular} />;
-      })}
-    </>
+    <div className="text-center">
+      <FormImg handleSubmit={handleSubmit} />
+      <hr />
+
+      {loading && <Loading />}
+
+      <div className="row">
+        {images.map((img) => {
+          return (
+            <div key={img.id} className="col">
+              <Card img={img.urls.regular} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
